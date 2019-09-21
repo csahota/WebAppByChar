@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="WeatherByChar"
+               packages="org.apache.logging.log4j.test">
+  <Properties>
+    <Property name="filename">target/weatherbychar-logging.log</Property>
+  </Properties>
+  <Filter type="ThresholdFilter" level="trace"/>
+ 
+  <ThresholdFilter level="debug"/>
+ 
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%m%n"/>
+      <ThresholdFilter level="debug"/>
+    </Console>
+    <Routing name="Routing">
+      <Routes pattern="$${sd:type}">
+        <Route>
+          <RollingFile name="Rolling-${sd:type}" fileName="${filename}"
+                       filePattern="target/${filename}-${sd:type}.%i.log.gz">
+            <PatternLayout>
+              <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="500" />
+          </RollingFile>
+        </Route>
+        <Route ref="STDOUT" key="Audit"/>
+      </Routes>
+    </Routing>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="EventLogger" level="info" additivity="false">
+      <AppenderRef ref="Routing"/>
+    </Logger>
+ 
+    <Root level="error">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
